@@ -1,7 +1,7 @@
 # Build configuration for Netlify
 [build]
   base = "./"
-  command = "cd client && npm run build"
+  command = "cd client && npm install && npm run build"
   publish = "client/dist"
   ignore = "git diff --quiet $COMMIT_REF $CACHED_COMMIT_REF -- client/"
 
