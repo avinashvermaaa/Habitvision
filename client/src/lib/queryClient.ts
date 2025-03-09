@@ -7,12 +7,21 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+// Get the API base URL based on environment
+export const getApiBaseUrl = () => {
+  // In production, API calls will be proxied through Netlify redirects
+  // In development, API calls will be made to the local server
+  return '';
+};
+
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const apiUrl = getApiBaseUrl() + url;
+  
+  const res = await fetch(apiUrl, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
@@ -29,7 +38,8 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
+    const apiUrl = getApiBaseUrl() + (queryKey[0] as string);
+    const res = await fetch(apiUrl, {
       credentials: "include",
     });
 

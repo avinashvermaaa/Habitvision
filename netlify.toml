@@ -1,0 +1,34 @@
+# Build configuration for Netlify
+[build]
+  base = "./"
+  command = "cd client && npm run build"
+  publish = "client/dist"
+  ignore = "git diff --quiet $COMMIT_REF $CACHED_COMMIT_REF -- client/"
+
+# Environment variable settings
+[build.environment]
+  NODE_ENV = "production"
+
+# Redirect API requests to the Render backend
+[[redirects]]
+  from = "/api/*"
+  to = "https://habit-tracker-backend.onrender.com/api/:splat"
+  status = 200
+  force = true
+  headers = {Access-Control-Allow-Origin = "*"}
+
+# Handle SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Set security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://habit-tracker-backend.onrender.com;"
